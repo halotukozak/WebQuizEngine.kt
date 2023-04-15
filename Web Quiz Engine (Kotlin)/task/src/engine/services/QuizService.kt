@@ -1,14 +1,12 @@
-package engine.services;
+package engine.services
 
 import engine.db.model.Question
 import org.springframework.stereotype.Service
 
 @Service
-class QuizService(
-) {
+class QuizService{
 
-    private val repository = mutableListOf<Question>();
-    private var lastId = 1;
+    private val repository = mutableListOf<Question>()
     fun getAll(): List<Question> = repository
 
     fun getQuestionById(id: Long): Question? = repository.firstOrNull{it.getId() == id}
@@ -19,3 +17,4 @@ class QuizService(
         return question
     }
 }
+

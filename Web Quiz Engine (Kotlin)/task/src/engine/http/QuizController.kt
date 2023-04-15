@@ -1,15 +1,13 @@
 package engine.http
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import engine.db.model.Question
-import engine.http.request.AnswerRequest
 import engine.http.request.QuestionRequest
 import engine.http.response.AnswerResponse
 import engine.http.response.QuestionResponse
 import engine.services.QuizService
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/quizzes")
@@ -26,13 +24,13 @@ class QuizController(private val service: QuizService) {
         )
 
     @PostMapping("/{id}/solve")
-    fun checkAnswer(@RequestBody answer: AnswerRequest, @PathVariable id: String): AnswerResponse {
+    fun checkAnswer(@RequestParam answer: String, @PathVariable id: String): AnswerResponse {
         val question = service.getQuestionById(id.toLong()) ?: throw ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "Question not found"
         )
 
-        return if (question.check(answer.number())) AnswerResponse.ok()
+        return if (question.check(answer.toInt())) AnswerResponse.ok()
         else AnswerResponse.wrong()
     }
 
