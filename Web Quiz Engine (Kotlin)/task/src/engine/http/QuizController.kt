@@ -1,6 +1,7 @@
 package engine.http
 
 import engine.db.model.Question
+import engine.http.request.AnswerRequest
 import engine.http.request.QuestionRequest
 import engine.http.response.AnswerResponse
 import engine.http.response.QuestionResponse
@@ -24,13 +25,13 @@ class QuizController(private val service: QuizService) {
         )
 
     @PostMapping("/{id}/solve")
-    fun checkAnswer(@RequestParam answer: String, @PathVariable id: String): AnswerResponse {
+    fun checkAnswer(@RequestBody answer: AnswerRequest, @PathVariable id: String): AnswerResponse {
         val question = service.getQuestionById(id.toLong()) ?: throw ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "Question not found"
         )
 
-        return if (question.check(answer.toInt())) AnswerResponse.ok()
+        return if (question.check(answer.answer)) AnswerResponse.ok()
         else AnswerResponse.wrong()
     }
 
