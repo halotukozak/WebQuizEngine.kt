@@ -1,24 +1,32 @@
 package engine.services
 
 import engine.db.model.Question
+import engine.db.repository.CompletionRepository
 import engine.db.repository.QuestionRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class QuizService(private val repository: QuestionRepository) {
+class QuizService(
+    private val questionRepository: QuestionRepository,
+) {
 
-    fun getAll(): List<Question> = repository.findAll().toList()
+    fun getAll(page: Int): Page<Question> = questionRepository.findAll(PageRequest.of(page, 10))
 
-    fun getQuestionById(id: Long): Question? = repository.findByIdOrNull(id)
+    fun getQuestionById(id: Long): Question? = questionRepository.findByIdOrNull(id)
 
 
     fun addAnswer(question: Question): Question {
-        repository.save(question)
+        questionRepository.save(question)
         return question
     }
 
-    fun removeQuestion(question: Question) = repository.delete(question)
+    fun removeQuestion(question: Question) {
+        questionRepository.delete(question)
+    }
+
 
 }
 

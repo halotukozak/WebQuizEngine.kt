@@ -22,6 +22,9 @@ data class Question(
     fun toResponse(): QuestionResponse = QuestionResponse(id, title, text, options)
     fun check(answers: Set<Int>): Boolean = answer == answers
     fun isAuthor(user: User): Boolean = author.username == user.username
+
+    fun id(): Long? = id
+
     companion object {
         fun fromRequest(request: QuestionRequest, author: User) =
             Question(request.title, request.text, request.options, request.answer ?: emptySet(), author)

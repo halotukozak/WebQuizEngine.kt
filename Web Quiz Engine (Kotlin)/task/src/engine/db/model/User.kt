@@ -1,22 +1,19 @@
 package engine.db.model
 
-import engine.http.request.RegisterRequest
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 
 @Entity
 class User(private val email: String, private val password: String, @Id @GeneratedValue val id: Long? = null) :
     UserDetails {
 
+    @OneToMany(fetch = FetchType.EAGER)
+    val completed: MutableCollection<Completion> = mutableSetOf()
+
+    fun completeQuestion(completedQuestion: Completion) = completed.add(completedQuestion)
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = HashSet()
-
-
     override fun getPassword(): String = password
     override fun getUsername(): String = email
     override fun isAccountNonExpired(): Boolean = true
