@@ -7,5 +7,5 @@ data class QuestionRequest(
     @NotBlank val title: String,
     @NotBlank val text: String,
     @Size(min = 2) val options: List<String>,
-    val answer: List<Int>?
+    val answer: Set<Int>?
 )

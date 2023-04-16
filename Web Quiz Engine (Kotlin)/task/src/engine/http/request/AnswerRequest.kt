@@ -1,3 +1,3 @@
 package engine.http.request
 
-data class AnswerRequest(val answer: List<Int> = emptyList())
+data class AnswerRequest(val answer: Set<Int> = emptySet())

@@ -2,22 +2,28 @@ package engine.db.model
 
 import engine.http.request.QuestionRequest
 import engine.http.response.QuestionResponse
+import javax.persistence.*
 
+@Entity
 data class Question(
-    private val title: String,
-    private val text: String,
+    private var title: String = "",
+    private var text: String = "",
+    @ElementCollection
     private val options: List<String> = listOf(),
-    private val answer: List<Int>,
-    private val id: Long
+    @ElementCollection
+    private val answer: Set<Int> = setOf(),
+    @OneToOne
+    private val author: User,
+    @Id
+    @GeneratedValue
+    private val id: Long? = null
 ) {
 
     fun toResponse(): QuestionResponse = QuestionResponse(id, title, text, options)
-    fun check(answers: List<Int>): Boolean = answer == answers
-    fun getId() = id
-
+    fun check(answers: Set<Int>): Boolean = answer == answers
+    fun isAuthor(user: User): Boolean = author.username == user.username
     companion object {
-        private var lastId = 1L
-        fun fromRequest(request: QuestionRequest) =
-            Question(request.title, request.text, request.options, request.answer ?: emptyList(), lastId++)
+        fun fromRequest(request: QuestionRequest, author: User) =
+            Question(request.title, request.text, request.options, request.answer ?: emptySet(), author)
     }
 }
