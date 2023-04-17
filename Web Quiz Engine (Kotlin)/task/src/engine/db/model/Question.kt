@@ -2,6 +2,8 @@ package engine.db.model
 
 import engine.http.request.QuestionRequest
 import engine.http.response.QuestionResponse
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import javax.persistence.*
 
 @Entity
@@ -17,9 +19,9 @@ data class Question(
     @Id
     @GeneratedValue
     private val id: Long? = null
-) {
+) : Responseable {
 
-    fun toResponse(): QuestionResponse = QuestionResponse(id, title, text, options)
+    override fun toResponse(): QuestionResponse = QuestionResponse(id, title, text, options)
     fun check(answers: Set<Int>): Boolean = answer == answers
     fun isAuthor(user: User): Boolean = author.username == user.username
 

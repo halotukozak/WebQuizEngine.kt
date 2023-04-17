@@ -1,24 +1,21 @@
 package engine.db.model
 
 import engine.http.response.CompletionResponse
-import org.hibernate.annotations.Cascade
-import org.hibernate.annotations.CascadeType
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.time.LocalDateTime
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.OneToOne
+import javax.persistence.*
 
 @Entity
 class Completion(
-    @OneToOne
+    @ManyToOne
     private val user: User,
-    @OneToOne
+    @ManyToOne
     private val question: Question,
     private val timestamp: LocalDateTime = LocalDateTime.now(),
     @Id
     @GeneratedValue
     private val id: Long? = null
-) {
-    fun toResponse(): CompletionResponse = CompletionResponse(question.id(), timestamp)
+) : Responseable {
+    override fun toResponse(): CompletionResponse = CompletionResponse(question.id(), timestamp)
 }

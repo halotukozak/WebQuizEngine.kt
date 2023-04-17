@@ -5,6 +5,9 @@ import engine.db.model.Question
 import engine.db.model.User
 import engine.db.repository.CompletionRepository
 import engine.db.repository.UserRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -23,11 +26,18 @@ class UserService(private val userRepository: UserRepository, private val comple
     }
 
     fun existsUserByEmail(email: String): Boolean = userRepository.existsUserByEmail(email)
+
     override fun loadUserByUsername(username: String?): UserDetails? = username?.let { userRepository.findByEmail(it) }
+
     fun completeQuestion(user: User, question: Question) {
         val completion = Completion(user, question)
         completionRepository.save(completion)
         user.completeQuestion(completion)
         userRepository.save(user)
     }
+
+    fun getCompletedBy(user: User, page: Int): Page<Completion> =
+        completionRepository.findAllByUser(user, PageRequest.of(page, 10, Sort.by("timestamp").descending()))
+
+
 }

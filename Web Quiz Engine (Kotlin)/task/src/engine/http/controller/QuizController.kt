@@ -1,18 +1,15 @@
 package engine.http.controller
 
-import engine.db.model.Completion
 import engine.db.model.Question
+import engine.db.model.Responseable
 import engine.db.model.User
 import engine.http.exception.QuestionNotFoundException
 import engine.http.request.AnswerRequest
 import engine.http.request.QuestionRequest
-import engine.http.response.AnswerResponse
-import engine.http.response.PageResponse
-import engine.http.response.QuestionResponse
+import engine.http.response.*
 import engine.services.QuizService
 import engine.services.UserService
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -31,7 +28,8 @@ class QuizController(
     fun getCompletedQuestions(
         @RequestParam(defaultValue = "0") page: Int,
         @AuthenticationPrincipal user: User
-    ): PageResponse = TODO()
+    ): PageResponse =
+        userService.getCompletedBy(user, page).toResponse()
 
 
     @GetMapping("/{id}")
@@ -67,32 +65,15 @@ class QuizController(
     }
 }
 
-private fun PageImpl<Completion>.toResponse(): PageResponse =
-    PageResponse(
-        totalPages,
-        totalElements,
-        if (isEmpty) null else last(),
-        if (isEmpty) null else first(),
-        sort,
-        number,
-        numberOfElements,
-        size,
-        isEmpty,
-        pageable,
-        content.map { it.toResponse() }
-    )
-
-
-private fun Page<Question>.toResponse(): PageResponse =
-    PageResponse(
-        totalPages,
-        totalElements,
-        if (isEmpty) null else last(),
-        if (isEmpty) null else first(),
-        sort,
-        number,
-        numberOfElements,
-        size,
-        isEmpty,
-        pageable,
-        content.map { it.toResponse() })
+private fun <T : Responseable> Page<T>.toResponse(): PageResponse = PageResponse(
+    totalPages,
+    totalElements,
+    isLast,
+    isFirst,
+    sort,
+    number,
+    numberOfElements,
+    size,
+    isEmpty,
+    pageable,
+    content.map { it.toResponse() })
