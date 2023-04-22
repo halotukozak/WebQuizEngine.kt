@@ -12,9 +12,10 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
-class UserService(private val userRepository: UserRepository, private val completionRepository: CompletionRepository) :
+class UserService(private val userRepository: UserRepository, private val completionService: CompletionService) :
     UserDetailsService {
 
     fun getUserById(id: Long): User? = userRepository.findByIdOrNull(id)
@@ -31,13 +32,12 @@ class UserService(private val userRepository: UserRepository, private val comple
 
     fun completeQuestion(user: User, question: Question) {
         val completion = Completion(user, question)
-        completionRepository.save(completion)
         user.completeQuestion(completion)
+        completionService.addCompletion(completion)
         userRepository.save(user)
     }
 
     fun getCompletedBy(user: User, page: Int): Page<Completion> =
-        completionRepository.findAllByUser(user, PageRequest.of(page, 10, Sort.by("timestamp").descending()))
-
+    completionService.findByUser(user, page)
 
 }

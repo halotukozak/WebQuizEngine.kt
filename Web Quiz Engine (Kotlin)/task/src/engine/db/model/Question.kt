@@ -2,6 +2,8 @@ package engine.db.model
 
 import engine.http.request.QuestionRequest
 import engine.http.response.QuestionResponse
+import org.hibernate.annotations.LazyCollection
+import org.hibernate.annotations.LazyCollectionOption
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import javax.persistence.*
@@ -14,8 +16,10 @@ data class Question(
     private val options: List<String> = listOf(),
     @ElementCollection
     private val answer: Set<Int> = setOf(),
-    @OneToOne
+    @ManyToOne
     private val author: User,
+    @OneToMany(mappedBy = "question", cascade = [CascadeType.REMOVE])
+    private val completions: MutableCollection<Completion> = mutableSetOf(),
     @Id
     @GeneratedValue
     private val id: Long? = null

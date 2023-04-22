@@ -9,7 +9,7 @@ import javax.persistence.*
 class User(private val email: String, private val password: String, @Id @GeneratedValue val id: Long? = null) :
     UserDetails {
 
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE], fetch = FetchType.EAGER, orphanRemoval = true)
     val completed: MutableCollection<Completion> = mutableSetOf()
 
     fun completeQuestion(completedQuestion: Completion) = completed.add(completedQuestion)

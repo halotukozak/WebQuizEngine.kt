@@ -7,6 +7,7 @@ import engine.http.exception.QuestionNotFoundException
 import engine.http.request.AnswerRequest
 import engine.http.request.QuestionRequest
 import engine.http.response.*
+import engine.services.CompletionService
 import engine.services.QuizService
 import engine.services.UserService
 import org.springframework.data.domain.Page
@@ -18,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 @RequestMapping("/api/quizzes")
 class QuizController(
-    private val quizService: QuizService, private val userService: UserService
+    private val quizService: QuizService, private val userService: UserService,private val completionService: CompletionService
 ) {
 
     @GetMapping
